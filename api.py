@@ -116,3 +116,68 @@ async def predict_license_plate(file: UploadFile = File(...)):
             "all_votes": dict(vote_tallies) 
         }
     }
+
+
+@app.post("/predict")
+async def predict_license_plate(file: UploadFile = File(...)):
+    # kode predict video kamu
+    ...
+    return {
+        "success": True,
+        "final_plate": winning_plate,
+        "voting_stats": {
+            ...
+        }
+    }
+
+
+@app.post("/predict-frame")
+async def predict_frame(file: UploadFile = File(...)):
+    contents = await file.read()
+
+    np_arr = np.frombuffer(contents, np.uint8)
+    frame = cv2.imdecode(np_arr, cv2.IMREAD_COLOR)
+
+    if frame is None:
+        return {
+            "success": False,
+            "message": "Invalid image/frame."
+        }
+
+    plate_votes = []
+
+    results = yolo_model(frame, verbose=False)
+
+    for result in results:
+        boxes = result.boxes
+
+        for box in boxes:
+            confidence = float(box.conf[0])
+
+            if confidence > 0.6:
+                x1, y1, x2, y2 = map(int, box.xyxy[0])
+                cropped_plate = frame[y1:y2, x1:x2]
+
+                if cropped_plate.size == 0:
+                    continue
+
+                ocr_result = ocr_model.run(cropped_plate, return_confidence=True)
+
+                if ocr_result and len(ocr_result) > 0:
+                    extracted_text = ocr_result[0].plate
+                    plate_votes.append(extracted_text)
+
+    if not plate_votes:
+        return {
+            "success": False,
+            "message": "No license plate detected."
+        }
+
+    vote_tallies = Counter(plate_votes)
+    winning_plate = vote_tallies.most_common(1)[0][0]
+
+    return {
+        "success": True,
+        "final_plate": winning_plate,
+        "all_votes": dict(vote_tallies)
+    }

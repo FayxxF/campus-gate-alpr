@@ -166,5 +166,4 @@ async def predict_frame(file: UploadFile = File(...)):
     return {
         "success": True,
         "final_plate": winning_plate,
-        "all_votes": dict(vote_tallies)
     }

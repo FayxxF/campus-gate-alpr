@@ -118,19 +118,6 @@ async def predict_license_plate(file: UploadFile = File(...)):
     }
 
 
-@app.post("/predict")
-async def predict_license_plate(file: UploadFile = File(...)):
-    # kode predict video kamu
-    ...
-    return {
-        "success": True,
-        "final_plate": winning_plate,
-        "voting_stats": {
-            ...
-        }
-    }
-
-
 @app.post("/predict-frame")
 async def predict_frame(file: UploadFile = File(...)):
     contents = await file.read()

@@ -54,7 +54,7 @@ This is the easiest way to run the machine learning API without setting up Pytho
    ```
 3. Start the FastAPI server:
    ```bash
-   uvicorn api:app --reload --port 8001
+   python -m uvicorn api:app --reload --port 8001
    ```
 
 ### Starting the Dashboard Website

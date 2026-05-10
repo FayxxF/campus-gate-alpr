@@ -1,0 +1,8 @@
+ultralytics
+opencv-python-headless
+numpy
+fastapi
+fast-plate-ocr[train,onnx]
+tensorflow[and-cuda]
+uvicorn
+python-multipart
